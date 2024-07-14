@@ -1,6 +1,0 @@
-[
-    {"id": 1, "source_id": 1, "operator": "=", "product": "packimus", "condition_attribute_name": "attribute1", "attribute_type": "type1", "value": "value1"},
-    {"id": 2, "source_id": 1, "operator": "<>", "product": "packimus", "condition_attribute_name": "attribute2", "attribute_type": "type1", "value": "value2"},
-    {"id": 3, "source_id": 1, "operator": "LIKE", "product": "packimus", "condition_attribute_name": "attribute3", "attribute_type": "type1", "value": "value3"},
-    {"id": 4, "source_id": 1, "operator": "=", "product": "packimus", "condition_attribute_name": "attribute4", "attribute_type": "type1", "value": "value4"}
-]

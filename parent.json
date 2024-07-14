@@ -1,0 +1,1002 @@
+[
+    {
+        "source_id": 1,
+        "promo": "promo1",
+        "evaluation": "row403 OR row262 AND (row168 OR row474)"
+    },
+    {
+        "source_id": 2,
+        "promo": "promo2",
+        "evaluation": "row500 OR row274 AND (row237 OR row268)"
+    },
+    {
+        "source_id": 3,
+        "promo": "promo3",
+        "evaluation": "row461 OR row94 AND (row476 OR row487)"
+    },
+    {
+        "source_id": 4,
+        "promo": "promo4",
+        "evaluation": "row103 OR row477 AND (row215 OR row170)"
+    },
+    {
+        "source_id": 5,
+        "promo": "promo5",
+        "evaluation": "row462 OR row446 AND (row306 OR row362)"
+    },
+    {
+        "source_id": 6,
+        "promo": "promo6",
+        "evaluation": "row353 OR row192 AND (row190 OR row154)"
+    },
+    {
+        "source_id": 7,
+        "promo": "promo7",
+        "evaluation": "row383 OR row405 AND (row251 OR row86)"
+    },
+    {
+        "source_id": 8,
+        "promo": "promo8",
+        "evaluation": "row251 OR row191 AND (row180 OR row287)"
+    },
+    {
+        "source_id": 9,
+        "promo": "promo9",
+        "evaluation": "row253 OR row367 AND (row324 OR row33)"
+    },
+    {
+        "source_id": 10,
+        "promo": "promo10",
+        "evaluation": "row66 OR row86 AND (row327 OR row249)"
+    },
+    {
+        "source_id": 11,
+        "promo": "promo11",
+        "evaluation": "row53 OR row125 AND (row322 OR row450)"
+    },
+    {
+        "source_id": 12,
+        "promo": "promo12",
+        "evaluation": "row389 OR row340 AND (row121 OR row382)"
+    },
+    {
+        "source_id": 13,
+        "promo": "promo13",
+        "evaluation": "row373 OR row33 AND (row182 OR row319)"
+    },
+    {
+        "source_id": 14,
+        "promo": "promo14",
+        "evaluation": "row344 OR row187 AND (row60 OR row330)"
+    },
+    {
+        "source_id": 15,
+        "promo": "promo15",
+        "evaluation": "row21 OR row99 AND (row318 OR row260)"
+    },
+    {
+        "source_id": 16,
+        "promo": "promo16",
+        "evaluation": "row117 OR row117 AND (row430 OR row257)"
+    },
+    {
+        "source_id": 17,
+        "promo": "promo17",
+        "evaluation": "row137 OR row247 AND (row347 OR row321)"
+    },
+    {
+        "source_id": 18,
+        "promo": "promo18",
+        "evaluation": "row57 OR row436 AND (row231 OR row325)"
+    },
+    {
+        "source_id": 19,
+        "promo": "promo19",
+        "evaluation": "row109 OR row171 AND (row400 OR row171)"
+    },
+    {
+        "source_id": 20,
+        "promo": "promo20",
+        "evaluation": "row50 OR row266 AND (row218 OR row15)"
+    },
+    {
+        "source_id": 21,
+        "promo": "promo21",
+        "evaluation": "row4 OR row237 AND (row361 OR row415)"
+    },
+    {
+        "source_id": 22,
+        "promo": "promo22",
+        "evaluation": "row361 OR row100 AND (row93 OR row375)"
+    },
+    {
+        "source_id": 23,
+        "promo": "promo23",
+        "evaluation": "row181 OR row443 AND (row305 OR row162)"
+    },
+    {
+        "source_id": 24,
+        "promo": "promo24",
+        "evaluation": "row213 OR row197 AND (row246 OR row360)"
+    },
+    {
+        "source_id": 25,
+        "promo": "promo25",
+        "evaluation": "row218 OR row268 AND (row368 OR row216)"
+    },
+    {
+        "source_id": 26,
+        "promo": "promo26",
+        "evaluation": "row432 OR row410 AND (row407 OR row317)"
+    },
+    {
+        "source_id": 27,
+        "promo": "promo27",
+        "evaluation": "row401 OR row125 AND (row250 OR row131)"
+    },
+    {
+        "source_id": 28,
+        "promo": "promo28",
+        "evaluation": "row341 OR row422 AND (row434 OR row384)"
+    },
+    {
+        "source_id": 29,
+        "promo": "promo29",
+        "evaluation": "row329 OR row162 AND (row217 OR row110)"
+    },
+    {
+        "source_id": 30,
+        "promo": "promo30",
+        "evaluation": "row366 OR row45 AND (row453 OR row160)"
+    },
+    {
+        "source_id": 31,
+        "promo": "promo31",
+        "evaluation": "row11 OR row431 AND (row333 OR row66)"
+    },
+    {
+        "source_id": 32,
+        "promo": "promo32",
+        "evaluation": "row498 OR row250 AND (row447 OR row157)"
+    },
+    {
+        "source_id": 33,
+        "promo": "promo33",
+        "evaluation": "row178 OR row322 AND (row192 OR row134)"
+    },
+    {
+        "source_id": 34,
+        "promo": "promo34",
+        "evaluation": "row390 OR row5 AND (row222 OR row311)"
+    },
+    {
+        "source_id": 35,
+        "promo": "promo35",
+        "evaluation": "row306 OR row387 AND (row17 OR row125)"
+    },
+    {
+        "source_id": 36,
+        "promo": "promo36",
+        "evaluation": "row482 OR row338 AND (row278 OR row260)"
+    },
+    {
+        "source_id": 37,
+        "promo": "promo37",
+        "evaluation": "row25 OR row310 AND (row190 OR row368)"
+    },
+    {
+        "source_id": 38,
+        "promo": "promo38",
+        "evaluation": "row441 OR row11 AND (row337 OR row397)"
+    },
+    {
+        "source_id": 39,
+        "promo": "promo39",
+        "evaluation": "row494 OR row497 AND (row33 OR row249)"
+    },
+    {
+        "source_id": 40,
+        "promo": "promo40",
+        "evaluation": "row295 OR row162 AND (row76 OR row426)"
+    },
+    {
+        "source_id": 41,
+        "promo": "promo41",
+        "evaluation": "row208 OR row412 AND (row401 OR row289)"
+    },
+    {
+        "source_id": 42,
+        "promo": "promo42",
+        "evaluation": "row102 OR row396 AND (row47 OR row121)"
+    },
+    {
+        "source_id": 43,
+        "promo": "promo43",
+        "evaluation": "row467 OR row211 AND (row389 OR row139)"
+    },
+    {
+        "source_id": 44,
+        "promo": "promo44",
+        "evaluation": "row25 OR row335 AND (row117 OR row328)"
+    },
+    {
+        "source_id": 45,
+        "promo": "promo45",
+        "evaluation": "row399 OR row272 AND (row370 OR row151)"
+    },
+    {
+        "source_id": 46,
+        "promo": "promo46",
+        "evaluation": "row72 OR row469 AND (row383 OR row429)"
+    },
+    {
+        "source_id": 47,
+        "promo": "promo47",
+        "evaluation": "row197 OR row162 AND (row31 OR row416)"
+    },
+    {
+        "source_id": 48,
+        "promo": "promo48",
+        "evaluation": "row136 OR row379 AND (row127 OR row24)"
+    },
+    {
+        "source_id": 49,
+        "promo": "promo49",
+        "evaluation": "row144 OR row442 AND (row328 OR row286)"
+    },
+    {
+        "source_id": 50,
+        "promo": "promo50",
+        "evaluation": "row470 OR row307 AND (row15 OR row329)"
+    },
+    {
+        "source_id": 51,
+        "promo": "promo51",
+        "evaluation": "row127 OR row135 AND (row370 OR row174)"
+    },
+    {
+        "source_id": 52,
+        "promo": "promo52",
+        "evaluation": "row298 OR row146 AND (row318 OR row192)"
+    },
+    {
+        "source_id": 53,
+        "promo": "promo53",
+        "evaluation": "row88 OR row97 AND (row300 OR row329)"
+    },
+    {
+        "source_id": 54,
+        "promo": "promo54",
+        "evaluation": "row263 OR row489 AND (row250 OR row435)"
+    },
+    {
+        "source_id": 55,
+        "promo": "promo55",
+        "evaluation": "row396 OR row277 AND (row389 OR row246)"
+    },
+    {
+        "source_id": 56,
+        "promo": "promo56",
+        "evaluation": "row198 OR row35 AND (row351 OR row204)"
+    },
+    {
+        "source_id": 57,
+        "promo": "promo57",
+        "evaluation": "row155 OR row351 AND (row454 OR row151)"
+    },
+    {
+        "source_id": 58,
+        "promo": "promo58",
+        "evaluation": "row368 OR row172 AND (row293 OR row330)"
+    },
+    {
+        "source_id": 59,
+        "promo": "promo59",
+        "evaluation": "row377 OR row173 AND (row95 OR row435)"
+    },
+    {
+        "source_id": 60,
+        "promo": "promo60",
+        "evaluation": "row472 OR row37 AND (row378 OR row257)"
+    },
+    {
+        "source_id": 61,
+        "promo": "promo61",
+        "evaluation": "row460 OR row27 AND (row88 OR row491)"
+    },
+    {
+        "source_id": 62,
+        "promo": "promo62",
+        "evaluation": "row195 OR row362 AND (row405 OR row16)"
+    },
+    {
+        "source_id": 63,
+        "promo": "promo63",
+        "evaluation": "row331 OR row472 AND (row492 OR row445)"
+    },
+    {
+        "source_id": 64,
+        "promo": "promo64",
+        "evaluation": "row34 OR row469 AND (row306 OR row432)"
+    },
+    {
+        "source_id": 65,
+        "promo": "promo65",
+        "evaluation": "row250 OR row141 AND (row28 OR row252)"
+    },
+    {
+        "source_id": 66,
+        "promo": "promo66",
+        "evaluation": "row140 OR row289 AND (row30 OR row317)"
+    },
+    {
+        "source_id": 67,
+        "promo": "promo67",
+        "evaluation": "row449 OR row44 AND (row104 OR row473)"
+    },
+    {
+        "source_id": 68,
+        "promo": "promo68",
+        "evaluation": "row314 OR row68 AND (row71 OR row206)"
+    },
+    {
+        "source_id": 69,
+        "promo": "promo69",
+        "evaluation": "row295 OR row290 AND (row472 OR row72)"
+    },
+    {
+        "source_id": 70,
+        "promo": "promo70",
+        "evaluation": "row7 OR row306 AND (row498 OR row475)"
+    },
+    {
+        "source_id": 71,
+        "promo": "promo71",
+        "evaluation": "row20 OR row83 AND (row124 OR row247)"
+    },
+    {
+        "source_id": 72,
+        "promo": "promo72",
+        "evaluation": "row32 OR row430 AND (row353 OR row251)"
+    },
+    {
+        "source_id": 73,
+        "promo": "promo73",
+        "evaluation": "row185 OR row127 AND (row227 OR row208)"
+    },
+    {
+        "source_id": 74,
+        "promo": "promo74",
+        "evaluation": "row277 OR row153 AND (row318 OR row370)"
+    },
+    {
+        "source_id": 75,
+        "promo": "promo75",
+        "evaluation": "row362 OR row351 AND (row254 OR row341)"
+    },
+    {
+        "source_id": 76,
+        "promo": "promo76",
+        "evaluation": "row231 OR row130 AND (row3 OR row388)"
+    },
+    {
+        "source_id": 77,
+        "promo": "promo77",
+        "evaluation": "row249 OR row220 AND (row232 OR row436)"
+    },
+    {
+        "source_id": 78,
+        "promo": "promo78",
+        "evaluation": "row415 OR row8 AND (row129 OR row355)"
+    },
+    {
+        "source_id": 79,
+        "promo": "promo79",
+        "evaluation": "row442 OR row53 AND (row393 OR row428)"
+    },
+    {
+        "source_id": 80,
+        "promo": "promo80",
+        "evaluation": "row430 OR row300 AND (row106 OR row480)"
+    },
+    {
+        "source_id": 81,
+        "promo": "promo81",
+        "evaluation": "row270 OR row335 AND (row182 OR row128)"
+    },
+    {
+        "source_id": 82,
+        "promo": "promo82",
+        "evaluation": "row306 OR row135 AND (row2 OR row396)"
+    },
+    {
+        "source_id": 83,
+        "promo": "promo83",
+        "evaluation": "row159 OR row479 AND (row396 OR row456)"
+    },
+    {
+        "source_id": 84,
+        "promo": "promo84",
+        "evaluation": "row304 OR row126 AND (row359 OR row487)"
+    },
+    {
+        "source_id": 85,
+        "promo": "promo85",
+        "evaluation": "row261 OR row243 AND (row352 OR row384)"
+    },
+    {
+        "source_id": 86,
+        "promo": "promo86",
+        "evaluation": "row305 OR row286 AND (row78 OR row188)"
+    },
+    {
+        "source_id": 87,
+        "promo": "promo87",
+        "evaluation": "row402 OR row364 AND (row354 OR row36)"
+    },
+    {
+        "source_id": 88,
+        "promo": "promo88",
+        "evaluation": "row457 OR row123 AND (row19 OR row392)"
+    },
+    {
+        "source_id": 89,
+        "promo": "promo89",
+        "evaluation": "row86 OR row414 AND (row192 OR row223)"
+    },
+    {
+        "source_id": 90,
+        "promo": "promo90",
+        "evaluation": "row278 OR row180 AND (row11 OR row406)"
+    },
+    {
+        "source_id": 91,
+        "promo": "promo91",
+        "evaluation": "row196 OR row287 AND (row64 OR row322)"
+    },
+    {
+        "source_id": 92,
+        "promo": "promo92",
+        "evaluation": "row50 OR row197 AND (row217 OR row499)"
+    },
+    {
+        "source_id": 93,
+        "promo": "promo93",
+        "evaluation": "row492 OR row193 AND (row1 OR row458)"
+    },
+    {
+        "source_id": 94,
+        "promo": "promo94",
+        "evaluation": "row45 OR row468 AND (row477 OR row25)"
+    },
+    {
+        "source_id": 95,
+        "promo": "promo95",
+        "evaluation": "row223 OR row253 AND (row338 OR row213)"
+    },
+    {
+        "source_id": 96,
+        "promo": "promo96",
+        "evaluation": "row321 OR row362 AND (row127 OR row131)"
+    },
+    {
+        "source_id": 97,
+        "promo": "promo97",
+        "evaluation": "row133 OR row223 AND (row171 OR row229)"
+    },
+    {
+        "source_id": 98,
+        "promo": "promo98",
+        "evaluation": "row8 OR row233 AND (row138 OR row240)"
+    },
+    {
+        "source_id": 99,
+        "promo": "promo99",
+        "evaluation": "row441 OR row19 AND (row114 OR row333)"
+    },
+    {
+        "source_id": 100,
+        "promo": "promo100",
+        "evaluation": "row148 OR row72 AND (row3 OR row37)"
+    },
+    {
+        "source_id": 101,
+        "promo": "promo101",
+        "evaluation": "row475 OR row291 AND (row483 OR row445)"
+    },
+    {
+        "source_id": 102,
+        "promo": "promo102",
+        "evaluation": "row333 OR row75 AND (row463 OR row61)"
+    },
+    {
+        "source_id": 103,
+        "promo": "promo103",
+        "evaluation": "row374 OR row168 AND (row34 OR row101)"
+    },
+    {
+        "source_id": 104,
+        "promo": "promo104",
+        "evaluation": "row417 OR row359 AND (row282 OR row446)"
+    },
+    {
+        "source_id": 105,
+        "promo": "promo105",
+        "evaluation": "row356 OR row260 AND (row141 OR row116)"
+    },
+    {
+        "source_id": 106,
+        "promo": "promo106",
+        "evaluation": "row221 OR row459 AND (row371 OR row118)"
+    },
+    {
+        "source_id": 107,
+        "promo": "promo107",
+        "evaluation": "row412 OR row484 AND (row397 OR row321)"
+    },
+    {
+        "source_id": 108,
+        "promo": "promo108",
+        "evaluation": "row237 OR row307 AND (row70 OR row251)"
+    },
+    {
+        "source_id": 109,
+        "promo": "promo109",
+        "evaluation": "row283 OR row111 AND (row397 OR row318)"
+    },
+    {
+        "source_id": 110,
+        "promo": "promo110",
+        "evaluation": "row350 OR row86 AND (row165 OR row319)"
+    },
+    {
+        "source_id": 111,
+        "promo": "promo111",
+        "evaluation": "row180 OR row278 AND (row251 OR row261)"
+    },
+    {
+        "source_id": 112,
+        "promo": "promo112",
+        "evaluation": "row10 OR row75 AND (row256 OR row80)"
+    },
+    {
+        "source_id": 113,
+        "promo": "promo113",
+        "evaluation": "row372 OR row331 AND (row407 OR row104)"
+    },
+    {
+        "source_id": 114,
+        "promo": "promo114",
+        "evaluation": "row313 OR row230 AND (row245 OR row170)"
+    },
+    {
+        "source_id": 115,
+        "promo": "promo115",
+        "evaluation": "row470 OR row91 AND (row440 OR row117)"
+    },
+    {
+        "source_id": 116,
+        "promo": "promo116",
+        "evaluation": "row348 OR row406 AND (row212 OR row292)"
+    },
+    {
+        "source_id": 117,
+        "promo": "promo117",
+        "evaluation": "row450 OR row292 AND (row328 OR row432)"
+    },
+    {
+        "source_id": 118,
+        "promo": "promo118",
+        "evaluation": "row429 OR row400 AND (row8 OR row258)"
+    },
+    {
+        "source_id": 119,
+        "promo": "promo119",
+        "evaluation": "row245 OR row13 AND (row5 OR row224)"
+    },
+    {
+        "source_id": 120,
+        "promo": "promo120",
+        "evaluation": "row3 OR row127 AND (row337 OR row26)"
+    },
+    {
+        "source_id": 121,
+        "promo": "promo121",
+        "evaluation": "row120 OR row76 AND (row238 OR row473)"
+    },
+    {
+        "source_id": 122,
+        "promo": "promo122",
+        "evaluation": "row360 OR row226 AND (row286 OR row128)"
+    },
+    {
+        "source_id": 123,
+        "promo": "promo123",
+        "evaluation": "row301 OR row43 AND (row176 OR row244)"
+    },
+    {
+        "source_id": 124,
+        "promo": "promo124",
+        "evaluation": "row251 OR row227 AND (row60 OR row295)"
+    },
+    {
+        "source_id": 125,
+        "promo": "promo125",
+        "evaluation": "row467 OR row358 AND (row415 OR row111)"
+    },
+    {
+        "source_id": 126,
+        "promo": "promo126",
+        "evaluation": "row201 OR row276 AND (row298 OR row362)"
+    },
+    {
+        "source_id": 127,
+        "promo": "promo127",
+        "evaluation": "row407 OR row214 AND (row414 OR row133)"
+    },
+    {
+        "source_id": 128,
+        "promo": "promo128",
+        "evaluation": "row216 OR row10 AND (row283 OR row18)"
+    },
+    {
+        "source_id": 129,
+        "promo": "promo129",
+        "evaluation": "row460 OR row151 AND (row415 OR row312)"
+    },
+    {
+        "source_id": 130,
+        "promo": "promo130",
+        "evaluation": "row165 OR row228 AND (row312 OR row281)"
+    },
+    {
+        "source_id": 131,
+        "promo": "promo131",
+        "evaluation": "row149 OR row45 AND (row432 OR row129)"
+    },
+    {
+        "source_id": 132,
+        "promo": "promo132",
+        "evaluation": "row381 OR row416 AND (row486 OR row381)"
+    },
+    {
+        "source_id": 133,
+        "promo": "promo133",
+        "evaluation": "row196 OR row422 AND (row139 OR row57)"
+    },
+    {
+        "source_id": 134,
+        "promo": "promo134",
+        "evaluation": "row17 OR row66 AND (row257 OR row184)"
+    },
+    {
+        "source_id": 135,
+        "promo": "promo135",
+        "evaluation": "row340 OR row92 AND (row222 OR row137)"
+    },
+    {
+        "source_id": 136,
+        "promo": "promo136",
+        "evaluation": "row70 OR row60 AND (row218 OR row91)"
+    },
+    {
+        "source_id": 137,
+        "promo": "promo137",
+        "evaluation": "row154 OR row193 AND (row332 OR row314)"
+    },
+    {
+        "source_id": 138,
+        "promo": "promo138",
+        "evaluation": "row217 OR row191 AND (row117 OR row455)"
+    },
+    {
+        "source_id": 139,
+        "promo": "promo139",
+        "evaluation": "row228 OR row24 AND (row158 OR row417)"
+    },
+    {
+        "source_id": 140,
+        "promo": "promo140",
+        "evaluation": "row496 OR row448 AND (row353 OR row118)"
+    },
+    {
+        "source_id": 141,
+        "promo": "promo141",
+        "evaluation": "row344 OR row385 AND (row428 OR row11)"
+    },
+    {
+        "source_id": 142,
+        "promo": "promo142",
+        "evaluation": "row266 OR row20 AND (row318 OR row346)"
+    },
+    {
+        "source_id": 143,
+        "promo": "promo143",
+        "evaluation": "row68 OR row464 AND (row50 OR row341)"
+    },
+    {
+        "source_id": 144,
+        "promo": "promo144",
+        "evaluation": "row282 OR row442 AND (row485 OR row462)"
+    },
+    {
+        "source_id": 145,
+        "promo": "promo145",
+        "evaluation": "row442 OR row258 AND (row493 OR row469)"
+    },
+    {
+        "source_id": 146,
+        "promo": "promo146",
+        "evaluation": "row319 OR row210 AND (row297 OR row372)"
+    },
+    {
+        "source_id": 147,
+        "promo": "promo147",
+        "evaluation": "row225 OR row267 AND (row206 OR row244)"
+    },
+    {
+        "source_id": 148,
+        "promo": "promo148",
+        "evaluation": "row63 OR row47 AND (row29 OR row134)"
+    },
+    {
+        "source_id": 149,
+        "promo": "promo149",
+        "evaluation": "row439 OR row393 AND (row184 OR row134)"
+    },
+    {
+        "source_id": 150,
+        "promo": "promo150",
+        "evaluation": "row385 OR row489 AND (row269 OR row206)"
+    },
+    {
+        "source_id": 151,
+        "promo": "promo151",
+        "evaluation": "row250 OR row421 AND (row498 OR row269)"
+    },
+    {
+        "source_id": 152,
+        "promo": "promo152",
+        "evaluation": "row235 OR row276 AND (row479 OR row107)"
+    },
+    {
+        "source_id": 153,
+        "promo": "promo153",
+        "evaluation": "row375 OR row3 AND (row192 OR row305)"
+    },
+    {
+        "source_id": 154,
+        "promo": "promo154",
+        "evaluation": "row214 OR row3 AND (row438 OR row228)"
+    },
+    {
+        "source_id": 155,
+        "promo": "promo155",
+        "evaluation": "row96 OR row348 AND (row365 OR row287)"
+    },
+    {
+        "source_id": 156,
+        "promo": "promo156",
+        "evaluation": "row82 OR row238 AND (row303 OR row418)"
+    },
+    {
+        "source_id": 157,
+        "promo": "promo157",
+        "evaluation": "row310 OR row302 AND (row45 OR row146)"
+    },
+    {
+        "source_id": 158,
+        "promo": "promo158",
+        "evaluation": "row193 OR row298 AND (row271 OR row311)"
+    },
+    {
+        "source_id": 159,
+        "promo": "promo159",
+        "evaluation": "row188 OR row359 AND (row451 OR row70)"
+    },
+    {
+        "source_id": 160,
+        "promo": "promo160",
+        "evaluation": "row77 OR row4 AND (row45 OR row293)"
+    },
+    {
+        "source_id": 161,
+        "promo": "promo161",
+        "evaluation": "row490 OR row166 AND (row333 OR row354)"
+    },
+    {
+        "source_id": 162,
+        "promo": "promo162",
+        "evaluation": "row429 OR row118 AND (row188 OR row478)"
+    },
+    {
+        "source_id": 163,
+        "promo": "promo163",
+        "evaluation": "row36 OR row373 AND (row484 OR row213)"
+    },
+    {
+        "source_id": 164,
+        "promo": "promo164",
+        "evaluation": "row260 OR row186 AND (row282 OR row364)"
+    },
+    {
+        "source_id": 165,
+        "promo": "promo165",
+        "evaluation": "row61 OR row154 AND (row238 OR row74)"
+    },
+    {
+        "source_id": 166,
+        "promo": "promo166",
+        "evaluation": "row9 OR row266 AND (row469 OR row347)"
+    },
+    {
+        "source_id": 167,
+        "promo": "promo167",
+        "evaluation": "row130 OR row47 AND (row57 OR row70)"
+    },
+    {
+        "source_id": 168,
+        "promo": "promo168",
+        "evaluation": "row19 OR row119 AND (row344 OR row108)"
+    },
+    {
+        "source_id": 169,
+        "promo": "promo169",
+        "evaluation": "row51 OR row124 AND (row59 OR row325)"
+    },
+    {
+        "source_id": 170,
+        "promo": "promo170",
+        "evaluation": "row471 OR row74 AND (row216 OR row230)"
+    },
+    {
+        "source_id": 171,
+        "promo": "promo171",
+        "evaluation": "row420 OR row219 AND (row350 OR row195)"
+    },
+    {
+        "source_id": 172,
+        "promo": "promo172",
+        "evaluation": "row43 OR row103 AND (row413 OR row432)"
+    },
+    {
+        "source_id": 173,
+        "promo": "promo173",
+        "evaluation": "row16 OR row6 AND (row24 OR row126)"
+    },
+    {
+        "source_id": 174,
+        "promo": "promo174",
+        "evaluation": "row170 OR row303 AND (row181 OR row350)"
+    },
+    {
+        "source_id": 175,
+        "promo": "promo175",
+        "evaluation": "row16 OR row190 AND (row136 OR row20)"
+    },
+    {
+        "source_id": 176,
+        "promo": "promo176",
+        "evaluation": "row7 OR row483 AND (row96 OR row298)"
+    },
+    {
+        "source_id": 177,
+        "promo": "promo177",
+        "evaluation": "row144 OR row17 AND (row189 OR row276)"
+    },
+    {
+        "source_id": 178,
+        "promo": "promo178",
+        "evaluation": "row490 OR row16 AND (row133 OR row13)"
+    },
+    {
+        "source_id": 179,
+        "promo": "promo179",
+        "evaluation": "row13 OR row328 AND (row396 OR row144)"
+    },
+    {
+        "source_id": 180,
+        "promo": "promo180",
+        "evaluation": "row105 OR row73 AND (row22 OR row296)"
+    },
+    {
+        "source_id": 181,
+        "promo": "promo181",
+        "evaluation": "row292 OR row429 AND (row251 OR row240)"
+    },
+    {
+        "source_id": 182,
+        "promo": "promo182",
+        "evaluation": "row26 OR row387 AND (row263 OR row494)"
+    },
+    {
+        "source_id": 183,
+        "promo": "promo183",
+        "evaluation": "row281 OR row417 AND (row321 OR row381)"
+    },
+    {
+        "source_id": 184,
+        "promo": "promo184",
+        "evaluation": "row231 OR row235 AND (row206 OR row103)"
+    },
+    {
+        "source_id": 185,
+        "promo": "promo185",
+        "evaluation": "row181 OR row31 AND (row284 OR row392)"
+    },
+    {
+        "source_id": 186,
+        "promo": "promo186",
+        "evaluation": "row342 OR row181 AND (row175 OR row136)"
+    },
+    {
+        "source_id": 187,
+        "promo": "promo187",
+        "evaluation": "row86 OR row318 AND (row468 OR row11)"
+    },
+    {
+        "source_id": 188,
+        "promo": "promo188",
+        "evaluation": "row344 OR row451 AND (row122 OR row163)"
+    },
+    {
+        "source_id": 189,
+        "promo": "promo189",
+        "evaluation": "row386 OR row422 AND (row16 OR row88)"
+    },
+    {
+        "source_id": 190,
+        "promo": "promo190",
+        "evaluation": "row274 OR row474 AND (row34 OR row393)"
+    },
+    {
+        "source_id": 191,
+        "promo": "promo191",
+        "evaluation": "row139 OR row475 AND (row391 OR row344)"
+    },
+    {
+        "source_id": 192,
+        "promo": "promo192",
+        "evaluation": "row219 OR row311 AND (row440 OR row164)"
+    },
+    {
+        "source_id": 193,
+        "promo": "promo193",
+        "evaluation": "row201 OR row452 AND (row270 OR row209)"
+    },
+    {
+        "source_id": 194,
+        "promo": "promo194",
+        "evaluation": "row14 OR row137 AND (row127 OR row54)"
+    },
+    {
+        "source_id": 195,
+        "promo": "promo195",
+        "evaluation": "row327 OR row479 AND (row410 OR row348)"
+    },
+    {
+        "source_id": 196,
+        "promo": "promo196",
+        "evaluation": "row313 OR row233 AND (row415 OR row15)"
+    },
+    {
+        "source_id": 197,
+        "promo": "promo197",
+        "evaluation": "row122 OR row302 AND (row317 OR row225)"
+    },
+    {
+        "source_id": 198,
+        "promo": "promo198",
+        "evaluation": "row320 OR row11 AND (row186 OR row359)"
+    },
+    {
+        "source_id": 199,
+        "promo": "promo199",
+        "evaluation": "row209 OR row384 AND (row182 OR row258)"
+    },
+    {
+        "source_id": 200,
+        "promo": "promo200",
+        "evaluation": "row97 OR row339 AND (row159 OR row55)"
+    }
+]

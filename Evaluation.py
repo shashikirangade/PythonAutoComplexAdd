@@ -1,10 +1,34 @@
 import pandas as pd
 import operator
 from collections import OrderedDict
+import json
+import os
+import time
+import re
 
-# Read Excel files
-parent_df = pd.read_excel('parent.xlsx')
-child_df = pd.read_excel('child.xlsx')
+# Define file paths
+parent_file_path = 'parent.json'
+child_file_path = 'child.json'
+
+# Check if files exist
+if not os.path.exists(parent_file_path):
+    print(f"Error: {parent_file_path} does not exist.")
+    exit(1)
+
+if not os.path.exists(child_file_path):
+    print(f"Error: {child_file_path} does not exist.")
+    exit(1)
+
+# Read JSON files
+with open(parent_file_path, 'r') as f:
+    parent_data = json.load(f)
+
+with open(child_file_path, 'r') as f:
+    child_data = json.load(f)
+
+# Convert JSON data to DataFrame
+parent_df = pd.DataFrame(parent_data)
+child_df = pd.DataFrame(child_data)
 
 # Custom LRU Cache with hit count
 class LRUCache:
@@ -72,10 +96,27 @@ def evaluate_condition(condition):
     return op_func(condition['condition_attribute_name'], condition['value'])
 
 def evaluate_expression(expression, child_records):
-    for record in child_records:
-        result = evaluate_condition(record)
-        expression = expression.replace(str(record['id']), str(result))
-    return eval(expression)
+    # Replace `OR` and `AND` with `or` and `and`
+    expression = expression.replace('OR', 'or').replace('AND', 'and')
+
+    # Create a dictionary to map record IDs to their evaluation results
+    eval_dict = {f"row{record['id']}": str(evaluate_condition(record)).capitalize() for record in child_records}
+
+    # Replace each placeholder in the expression with the corresponding boolean result
+    for key, value in eval_dict.items():
+        expression = re.sub(r'\b{}\b'.format(key), value, expression)
+
+    # Find all `rowXXX` placeholders and replace them with `False` if not already replaced
+    all_placeholders = set(re.findall(r'row\d+', expression))
+    for placeholder in all_placeholders:
+        expression = re.sub(r'\b{}\b'.format(placeholder), 'False', expression)
+
+    # Evaluate the final boolean expression
+    try:
+        return eval(expression)
+    except NameError as e:
+        print(f"Error evaluating expression: {expression}")
+        raise e
 
 def apply_promo(product_name):
     child_records = get_child_records(product_name)
@@ -94,8 +135,22 @@ def apply_promo(product_name):
 
 # Example usage
 product_name = 'packimus'
+
+# Capture the start time
+start_time = time.time()
+
+# Call the function
 promos = apply_promo(product_name)
+
+# Capture the end time
+end_time = time.time()
+
+# Calculate the elapsed time
+elapsed_time = end_time - start_time
+
+# Print the results and the execution time
 print(f'Applicable promos for {product_name}: {promos}')
+print(f'Time taken to execute: {elapsed_time} seconds')
 print(f'Child Cache Hits: {child_cache.cache_hits()}')
 print(f'Parent Cache Hits: {parent_cache.cache_hits()}')
 print(f'Child Cache Contents: {child_cache.display_cache()}')

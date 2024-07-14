@@ -1,4 +1,0 @@
-[
-    {"source_id": 1, "promo": "promo1", "evaluation": "row1 OR row2 AND (row3 OR row4)"},
-    {"source_id": 2, "promo": "promo2", "evaluation": "row5 AND row6"}
-]
