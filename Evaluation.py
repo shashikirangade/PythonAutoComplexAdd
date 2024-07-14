@@ -1,146 +1,139 @@
 import pandas as pd
 import operator
-from collections import OrderedDict
-import json
-import os
-import time
+import sqlite3
 import re
+import time
+import json
+from datetime import datetime
 
-# Define file paths
-parent_file_path = 'parent.json'
-child_file_path = 'child.json'
-
-# Check if files exist
-if not os.path.exists(parent_file_path):
-    print(f"Error: {parent_file_path} does not exist.")
-    exit(1)
-
-if not os.path.exists(child_file_path):
-    print(f"Error: {child_file_path} does not exist.")
-    exit(1)
-
-# Read JSON files
-with open(parent_file_path, 'r') as f:
-    parent_data = json.load(f)
-
-with open(child_file_path, 'r') as f:
-    child_data = json.load(f)
-
-# Convert JSON data to DataFrame
-parent_df = pd.DataFrame(parent_data)
-child_df = pd.DataFrame(child_data)
-
-# Custom LRU Cache with hit count
-class LRUCache:
-    def __init__(self, max_size=100):
-        self.cache = OrderedDict()
-        self.hits = {}
-        self.max_size = max_size
-
-    def get(self, key):
-        if key in self.cache:
-            self.cache.move_to_end(key)  # Mark as recently used
-            self.hits[key] += 1
-            return self.cache[key]
-        return None
-
-    def set(self, key, value):
-        if key in self.cache:
-            self.cache.move_to_end(key)
-        else:
-            if len(self.cache) >= self.max_size:
-                oldest_key = next(iter(self.cache))
-                del self.cache[oldest_key]
-                del self.hits[oldest_key]
-            self.cache[key] = value
-            self.hits[key] = 1
-
-    def cache_hits(self):
-        return self.hits
-
-    def display_cache(self):
-        return list(self.cache.keys())
-
-# Initialize caches
-child_cache = LRUCache(max_size=100)
-parent_cache = LRUCache(max_size=100)
-
-def get_child_records(product_name):
-    cache_key = f'child_records:{product_name}'
-    cached_data = child_cache.get(cache_key)
-    if cached_data:
-        return cached_data
-    
-    data = child_df[child_df['product'] == product_name].to_dict('records')
-    child_cache.set(cache_key, data)
+# Function to get parent records from the database
+def get_parent_records(product_id):
+    conn = sqlite3.connect('mydatabase.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM PARENT_COMP_MATRIX WHERE PARENT_PRODID = ?', (product_id,))
+    data = cursor.fetchall()
+    conn.close()
     return data
 
-def get_parent_record(source_id):
-    cache_key = f'parent_record:{source_id}'
-    cached_data = parent_cache.get(cache_key)
-    if cached_data:
-        return cached_data
-    
-    data = parent_df[parent_df['source_id'] == source_id].to_dict('records')[0]
-    parent_cache.set(cache_key, data)
+# Function to get child records from the database
+def get_child_records(source_record_id):
+    conn = sqlite3.connect('mydatabase.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM CHILD_RULES WHERE SOURCE_RECORD_ID = ?', (source_record_id,))
+    data = cursor.fetchall()
+    conn.close()
     return data
 
+# Operators mapping
 operators = {
     '=': operator.eq,
     '<>': operator.ne,
     'LIKE': lambda a, b: b in a
 }
 
-def evaluate_condition(condition):
-    op_func = operators[condition['operator']]
-    return op_func(condition['condition_attribute_name'], condition['value'])
+# Function to evaluate a condition
+def evaluate_condition(condition, attributes, profile_attributes):
+    attribute_value = None
+    if condition[3].lower() == 'attribute':
+        attribute_value = attributes.get(condition[2])
+    elif condition[3].lower() == 'profile':
+        attribute_value = profile_attributes.get(condition[2])
+    
+    if attribute_value is None:
+        return False
+    
+    op_func = operators[condition[4]]
+    try:
+        return op_func(attribute_value, condition[5])
+    except Exception as e:
+        print(f"Error evaluating condition: {condition}, error: {e}")
+        return False
 
-def evaluate_expression(expression, child_records):
-    # Replace `OR` and `AND` with `or` and `and`
-    expression = expression.replace('OR', 'or').replace('AND', 'and')
+# Function to build a valid boolean expression
+def build_expression(expression, eval_dict):
+    if expression is None:
+        return "False"
+    tokens = re.findall(r'R-\w+|OR|AND|\(|\)', expression)
+    print(f"Tokens: {tokens}")
+    result = []
+    for token in tokens:
+        if token in eval_dict:
+            result.append(eval_dict[token])
+        elif token == 'OR':
+            result.append('or')
+        elif token == 'AND':
+            result.append('and')
+        else:
+            result.append(token)
+    built_expression = ' '.join(result)
+    print(f"Built Expression: {built_expression}")
+    return built_expression
 
+# Function to evaluate the final expression
+def evaluate_expression(expression, child_records, attributes, profile_attributes):
     # Create a dictionary to map record IDs to their evaluation results
-    eval_dict = {f"row{record['id']}": str(evaluate_condition(record)).capitalize() for record in child_records}
+    eval_dict = {f"R-{record[0]}": str(evaluate_condition(record, attributes, profile_attributes)).capitalize() for record in child_records}
+    print(f"Eval Dict: {eval_dict}")
 
-    # Replace each placeholder in the expression with the corresponding boolean result
-    for key, value in eval_dict.items():
-        expression = re.sub(r'\b{}\b'.format(key), value, expression)
+    # Build a valid boolean expression
+    expression = build_expression(expression, eval_dict)
 
-    # Find all `rowXXX` placeholders and replace them with `False` if not already replaced
-    all_placeholders = set(re.findall(r'row\d+', expression))
-    for placeholder in all_placeholders:
-        expression = re.sub(r'\b{}\b'.format(placeholder), 'False', expression)
+    # Print the expression before evaluating it
+    print(f"Evaluating expression: {expression}")
 
     # Evaluate the final boolean expression
     try:
         return eval(expression)
+    except SyntaxError as e:
+        print(f"Syntax error in expression: {expression}")
+        raise e
     except NameError as e:
-        print(f"Error evaluating expression: {expression}")
+        print(f"Name error in expression: {expression}")
         raise e
 
-def apply_promo(product_name):
-    child_records = get_child_records(product_name)
-    source_ids = {record['source_id'] for record in child_records}
+# Function to apply promo
+def apply_promo(input_json):
+    product_id = input_json['product_id']
+    attributes = input_json['attributes']
+    profile_attributes = input_json['profileattributes']
+    
+    parent_records = get_parent_records(product_id)
     
     applicable_promos = []
     
-    for source_id in source_ids:
-        parent_record = get_parent_record(source_id)
-        child_records_for_parent = [record for record in child_records if record['source_id'] == source_id]
+    for parent_record in parent_records:
+        source_record_id = parent_record[0]
+        subject_evaluator = parent_record[48]  # assuming this is the correct index for the evaluation field
+        print(f"Evaluating Parent Record: {parent_record}")
+        child_records = get_child_records(source_record_id)
         
-        if evaluate_expression(parent_record['evaluation'], child_records_for_parent):
-            applicable_promos.append(parent_record['promo'])
+        if evaluate_expression(subject_evaluator, child_records, attributes, profile_attributes):
+            applicable_promos.append(parent_record[2])
     
     return applicable_promos
 
 # Example usage
-product_name = 'packimus'
+input_json = {
+    "product_id": "KDKWA",
+    "attributes": {
+        "Prod Prom Name": "Ambassador Internet Fiber + Tel",
+        "BGC Promotion Parent Action Code": "Add"
+    },
+    "profileattributes": {
+        "BGC_MOVE_MIGRATE_STATUS": "Add",
+        "BGC_ORIGINAL_MOVE_MIGRATE_STATUS": "Add",
+        "BGC_Inet": "New",
+        "BGC_BF_ZONE": "Fiber - Fiber",
+        "BGC_BF_ACCESS_TYPE": "Fiber - Fiber",
+        "BGC_TV": "New"
+    }
+}
 
 # Capture the start time
 start_time = time.time()
 
 # Call the function
-promos = apply_promo(product_name)
+promos = apply_promo(input_json)
 
 # Capture the end time
 end_time = time.time()
@@ -149,9 +142,5 @@ end_time = time.time()
 elapsed_time = end_time - start_time
 
 # Print the results and the execution time
-print(f'Applicable promos for {product_name}: {promos}')
+print(f'Applicable promos for product {input_json["product_id"]}: {promos}')
 print(f'Time taken to execute: {elapsed_time} seconds')
-print(f'Child Cache Hits: {child_cache.cache_hits()}')
-print(f'Parent Cache Hits: {parent_cache.cache_hits()}')
-print(f'Child Cache Contents: {child_cache.display_cache()}')
-print(f'Parent Cache Contents: {parent_cache.display_cache()}')
