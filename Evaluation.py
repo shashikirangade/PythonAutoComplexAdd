@@ -28,23 +28,24 @@ def get_child_records(source_record_id):
 operators = {
     '=': operator.eq,
     '<>': operator.ne,
-    'LIKE': lambda a, b: b in a
+    'LIKE': lambda a, b: b in a,
+    '!=': operator.ne  # Add the '!=' operator here
 }
 
 # Function to evaluate a condition
 def evaluate_condition(condition, attributes, profile_attributes):
     attribute_value = None
-    if condition[3].lower() == 'attribute':
-        attribute_value = attributes.get(condition[2])
-    elif condition[3].lower() == 'profile':
-        attribute_value = profile_attributes.get(condition[2])
+    if condition[10].lower() == 'attribute':
+        attribute_value = attributes.get(condition[8])
+    elif condition[10].lower() == 'profile attribute':
+        attribute_value = profile_attributes.get(condition[8])
     
     if attribute_value is None:
         return False
     
-    op_func = operators[condition[4]]
+    op_func = operators[condition[13]]
     try:
-        return op_func(attribute_value, condition[5])
+        return op_func(attribute_value, condition[15])
     except Exception as e:
         print(f"Error evaluating condition: {condition}, error: {e}")
         return False
@@ -72,7 +73,7 @@ def build_expression(expression, eval_dict):
 # Function to evaluate the final expression
 def evaluate_expression(expression, child_records, attributes, profile_attributes):
     # Create a dictionary to map record IDs to their evaluation results
-    eval_dict = {f"R-{record[0]}": str(evaluate_condition(record, attributes, profile_attributes)).capitalize() for record in child_records}
+    eval_dict = {f"{record[14]}": str(evaluate_condition(record, attributes, profile_attributes)).capitalize() for record in child_records}
     print(f"Eval Dict: {eval_dict}")
 
     # Build a valid boolean expression
@@ -102,13 +103,13 @@ def apply_promo(input_json):
     applicable_promos = []
     
     for parent_record in parent_records:
-        source_record_id = parent_record[0]
-        subject_evaluator = parent_record[48]  # assuming this is the correct index for the evaluation field
+        source_record_id = parent_record[19]
+        subject_evaluator = parent_record[44]  # assuming this is the correct index for the evaluation field
         print(f"Evaluating Parent Record: {parent_record}")
         child_records = get_child_records(source_record_id)
         
         if evaluate_expression(subject_evaluator, child_records, attributes, profile_attributes):
-            applicable_promos.append(parent_record[2])
+            applicable_promos.append(parent_record[19])
     
     return applicable_promos
 
