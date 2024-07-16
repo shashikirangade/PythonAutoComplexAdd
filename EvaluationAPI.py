@@ -1,3 +1,4 @@
+from flask import Flask, request, jsonify
 import pandas as pd
 import operator
 import sqlite3
@@ -5,6 +6,8 @@ import re
 import time
 import json
 from datetime import datetime
+
+app = Flask(__name__)
 
 # Function to get parent records from the database
 def get_parent_records(product_id, conn):
@@ -107,35 +110,18 @@ def apply_promo(input_json):
     conn.close()
     return applicable_promos
 
-# Example usage
-input_json = {
-    "product_id": "KDKWA",
-    "attributes": {
-        "Prod Prom Name": "Ambassador Internet Fiber + Tel",
-        "BGC Promotion Parent Action Code": "Add"
-    },
-    "profileattributes": {
-        "BGC_MOVE_MIGRATE_STATUS": "Add",
-        "BGC_ORIGINAL_MOVE_MIGRATE_STATUS": "Add",
-        "BGC_Inet": "New",
-        "BGC_BF_ZONE": "Fiber - Fiber",
-        "BGC_BF_ACCESS_TYPE": "Fiber - Fiber",
-        "BGC_TV": "New"
-    }
-}
+# Flask route to handle the input and return the response
+@app.route('/apply_promo', methods=['POST'])
+def apply_promo_api():
+    input_json = request.json
+    if not input_json:
+        return jsonify({"error": "Invalid input"}), 400
+    
+    try:
+        promos = apply_promo(input_json)
+        return jsonify({"promos": promos})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-# Capture the start time
-start_time = time.time()
-
-# Call the function
-promos = apply_promo(input_json)
-
-# Capture the end time
-end_time = time.time()
-
-# Calculate the elapsed time
-elapsed_time = end_time - start_time
-
-# Print the results and the execution time
-print(f'Applicable promos for product {input_json["product_id"]}: {promos}')
-print(f'Time taken to execute: {elapsed_time} seconds')
+if __name__ == '__main__':
+    app.run(debug=True)
