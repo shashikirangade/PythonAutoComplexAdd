@@ -3,23 +3,42 @@ import pandas as pd
 import operator
 import sqlite3
 import re
-import time
 import json
 from datetime import datetime
 
 app = Flask(__name__)
 
-# Function to get parent records from the database
-def get_parent_records(product_id, conn):
+# Function to get child records matching the conditions from the database
+def get_matching_child_records(attributes, profile_attributes, conn):
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM PARENT_COMP_MATRIX WHERE PARENT_PRODID = ?', (product_id,))
+    matching_records = []
+
+    # Query the child table for each attribute
+    for attribute in attributes:
+        cursor.execute('SELECT * FROM CHILD_RULES WHERE CONDITION = ? AND OPERATOR = "=" AND VALUE = ?', (attribute["Name"], attribute["Value"]))
+        records = cursor.fetchall()
+        matching_records.extend(records)
+
+    # Query the child table for each profile attribute
+    for key, value in profile_attributes.items():
+        cursor.execute('SELECT * FROM CHILD_RULES WHERE CONDITION = ? AND OPERATOR = "=" AND VALUE = ?', (key, value))
+        records = cursor.fetchall()
+        matching_records.extend(records)
+
+    return matching_records
+
+# Function to get all child records associated with a specific source record ID
+def get_child_records_by_source_id(source_record_id, conn):
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM CHILD_RULES WHERE SOURCE_RECORD_ID = ?', (source_record_id,))
     data = cursor.fetchall()
     return data
 
-# Function to get child records from the database
-def get_child_records(source_record_id, conn):
+# Function to get parent records from the database
+def get_parent_records(source_record_ids, conn):
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM CHILD_RULES WHERE SOURCE_RECORD_ID = ?', (source_record_id,))
+    query = 'SELECT * FROM PARENT_COMP_MATRIX WHERE SOURCE_RECORD_ID IN ({})'.format(','.join('?' for _ in source_record_ids))
+    cursor.execute(query, source_record_ids)
     data = cursor.fetchall()
     return data
 
@@ -35,23 +54,17 @@ operators = {
 def evaluate_condition(condition, attributes, profile_attributes):
     attribute_value = None
     if condition[10].lower() == 'attribute':
-        attribute_value = attributes.get(condition[8])
+        for attribute in attributes:
+            if attribute["Name"] == condition[8]:
+                attribute_value = attribute["Value"]
+                if operators.get(condition[13])(attribute_value, condition[15]):
+                    return True
     elif condition[10].lower() == 'profile attribute':
         attribute_value = profile_attributes.get(condition[8])
-    
-    if attribute_value is None:
-        return False
-    
-    op_func = operators.get(condition[13])
-    if op_func is None:
-        print(f"Unsupported operator: {condition[13]}")
-        return False
-
-    try:
-        return op_func(attribute_value, condition[15])
-    except Exception as e:
-        print(f"Error evaluating condition: {condition}, error: {e}")
-        return False
+        if attribute_value is not None:
+            if operators.get(condition[13])(attribute_value, condition[15]):
+                return True
+    return False
 
 # Function to build a valid boolean expression
 def build_expression(expression, eval_dict):
@@ -82,43 +95,52 @@ def evaluate_expression(expression, child_records, attributes, profile_attribute
     try:
         return eval(expression)
     except SyntaxError as e:
-        print(f"Syntax error in expression: {expression}")
         raise e
     except NameError as e:
-        print(f"Name error in expression: {expression}")
         raise e
 
 # Function to apply promo
-def apply_promo(input_json):
-    product_id = input_json['product_id']
-    attributes = input_json['attributes']
-    profile_attributes = input_json['profileattributes']
-    
+def apply_promo(attributes, profile_attributes):
     conn = sqlite3.connect('mydatabase.db')
-    parent_records = get_parent_records(product_id, conn)
+    
+    # Get child records matching the conditions
+    matching_child_records = get_matching_child_records(attributes, profile_attributes, conn)
+    
+    if not matching_child_records:
+        return []
+
+    # Get unique source record IDs from matching child records
+    source_record_ids = list(set(record[16] for record in matching_child_records))
+
+    # Get parent records using the source record IDs
+    parent_records = get_parent_records(source_record_ids, conn)
     
     applicable_promos = []
     
     for parent_record in parent_records:
         source_record_id = parent_record[19]
         subject_evaluator = parent_record[44]  # assuming this is the correct index for the evaluation field
-        child_records = get_child_records(source_record_id, conn)
+
+        # Get all child records associated with this parent record's source ID
+        child_records = get_child_records_by_source_id(source_record_id, conn)
         
         if evaluate_expression(subject_evaluator, child_records, attributes, profile_attributes):
-            applicable_promos.append(parent_record[19])
+            applicable_promos.append(source_record_id)
     
     conn.close()
     return applicable_promos
 
-# Flask route to handle the input and return the response
 @app.route('/apply_promo', methods=['POST'])
 def apply_promo_api():
     input_json = request.json
     if not input_json:
         return jsonify({"error": "Invalid input"}), 400
     
+    attributes = input_json['attributes']
+    profile_attributes = input_json['profileattributes']
+    
     try:
-        promos = apply_promo(input_json)
+        promos = apply_promo(attributes, profile_attributes)
         return jsonify({"promos": promos})
     except Exception as e:
         return jsonify({"error": str(e)}), 500

@@ -6,18 +6,42 @@ import time
 import json
 from datetime import datetime
 
-# Function to get parent records from the database
-def get_parent_records(product_id, conn):
+# Function to get child records matching the conditions from the database
+def get_matching_child_records(attributes, profile_attributes, conn):
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM PARENT_COMP_MATRIX WHERE PARENT_PRODID = ?', (product_id,))
-    data = cursor.fetchall()
-    return data
+    matching_records = []
 
-# Function to get child records from the database
-def get_child_records(source_record_id, conn):
+    # Query the child table for each attribute
+    for attribute in attributes:
+        cursor.execute('SELECT * FROM CHILD_RULES WHERE CONDITION = ? AND OPERATOR = "=" AND VALUE = ?', (attribute["Name"], attribute["Value"]))
+        records = cursor.fetchall()
+        print(f'Query for attribute {attribute["Name"]}={attribute["Value"]} returned {len(records)} records.')
+        matching_records.extend(records)
+
+    # Query the child table for each profile attribute
+    for key, value in profile_attributes.items():
+        cursor.execute('SELECT * FROM CHILD_RULES WHERE CONDITION = ? AND OPERATOR = "=" AND VALUE = ?', (key, value))
+        records = cursor.fetchall()
+        print(f'Query for profile attribute {key}={value} returned {len(records)} records.')
+        matching_records.extend(records)
+
+    return matching_records
+
+# Function to get all child records associated with a specific source record ID
+def get_child_records_by_source_id(source_record_id, conn):
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM CHILD_RULES WHERE SOURCE_RECORD_ID = ?', (source_record_id,))
     data = cursor.fetchall()
+    return data
+
+# Function to get parent records from the database
+def get_parent_records(source_record_ids, conn):
+    cursor = conn.cursor()
+    query = 'SELECT * FROM PARENT_COMP_MATRIX WHERE SOURCE_RECORD_ID IN ({})'.format(','.join('?' for _ in source_record_ids))
+    print(f'Executing query: {query} with source_record_ids: {source_record_ids}')
+    cursor.execute(query, source_record_ids)
+    data = cursor.fetchall()
+    print(f'Parent records query returned {len(data)} records.')
     return data
 
 # Operators mapping
@@ -32,23 +56,17 @@ operators = {
 def evaluate_condition(condition, attributes, profile_attributes):
     attribute_value = None
     if condition[10].lower() == 'attribute':
-        attribute_value = attributes.get(condition[8])
+        for attribute in attributes:
+            if attribute["Name"] == condition[8]:
+                attribute_value = attribute["Value"]
+                if operators.get(condition[13])(attribute_value, condition[15]):
+                    return True
     elif condition[10].lower() == 'profile attribute':
         attribute_value = profile_attributes.get(condition[8])
-    
-    if attribute_value is None:
-        return False
-    
-    op_func = operators.get(condition[13])
-    if op_func is None:
-        print(f"Unsupported operator: {condition[13]}")
-        return False
-
-    try:
-        return op_func(attribute_value, condition[15])
-    except Exception as e:
-        print(f"Error evaluating condition: {condition}, error: {e}")
-        return False
+        if attribute_value is not None:
+            if operators.get(condition[13])(attribute_value, condition[15]):
+                return True
+    return False
 
 # Function to build a valid boolean expression
 def build_expression(expression, eval_dict):
@@ -86,56 +104,59 @@ def evaluate_expression(expression, child_records, attributes, profile_attribute
         raise e
 
 # Function to apply promo
-def apply_promo(input_json):
-    product_id = input_json['product_id']
-    attributes = input_json['attributes']
-    profile_attributes = input_json['profileattributes']
-    
+def apply_promo(attributes, profile_attributes):
     conn = sqlite3.connect('mydatabase.db')
-    parent_records = get_parent_records(product_id, conn)
+    
+    # Get child records matching the conditions
+    matching_child_records = get_matching_child_records(attributes, profile_attributes, conn)
+    
+    if not matching_child_records:
+        print('No matching child records found.')
+        return []
+
+    # Get unique source record IDs from matching child records
+    source_record_ids = list(set(record[16] for record in matching_child_records))
+    print(f'Unique source record IDs: {source_record_ids}')
+
+    # Get parent records using the source record IDs
+    parent_records = get_parent_records(source_record_ids, conn)
     
     applicable_promos = []
     
     for parent_record in parent_records:
         source_record_id = parent_record[19]
         subject_evaluator = parent_record[44]  # assuming this is the correct index for the evaluation field
-        child_records = get_child_records(source_record_id, conn)
+
+        # Get all child records associated with this parent record's source ID
+        child_records = get_child_records_by_source_id(source_record_id, conn)
         
         if evaluate_expression(subject_evaluator, child_records, attributes, profile_attributes):
-            applicable_promos.append(parent_record[19])
+            applicable_promos.append(source_record_id)
     
     conn.close()
     return applicable_promos
 
-# Example usage
+# Main script execution
+# Hardcoded input for debugging
 input_json = {
-    "product_id": "KDKWA",
-    "attributes": {
-        "Prod Prom Name": "Ambassador Internet Fiber + Tel",
-        "BGC Promotion Parent Action Code": "Add"
-    },
+    "attributes": [
+        {"Name": "Prod Prom Name", "Value": "Flex Fiber Ambassador", "Type": "Attribute"},
+        {"Name": "Prod Prom Name", "Value": "Home fiber", "Type": "Attribute"}
+    ],
     "profileattributes": {
+        "BGC_BF_ACCESS_TYPE": "Both",
         "BGC_MOVE_MIGRATE_STATUS": "Add",
         "BGC_ORIGINAL_MOVE_MIGRATE_STATUS": "Add",
-        "BGC_Inet": "New",
-        "BGC_BF_ZONE": "Fiber - Fiber",
-        "BGC_BF_ACCESS_TYPE": "Fiber - Fiber",
-        "BGC_TV": "New"
+        "BGC_BF_ZONE": "Copper - Copper"
     }
 }
 
-# Capture the start time
-start_time = time.time()
+# Extracting attributes and profile attributes
+attributes = input_json['attributes']
+profile_attributes = input_json['profileattributes']
 
 # Call the function
-promos = apply_promo(input_json)
+promos = apply_promo(attributes, profile_attributes)
 
-# Capture the end time
-end_time = time.time()
-
-# Calculate the elapsed time
-elapsed_time = end_time - start_time
-
-# Print the results and the execution time
-print(f'Applicable promos for product {input_json["product_id"]}: {promos}')
-print(f'Time taken to execute: {elapsed_time} seconds')
+# Print the results
+print(f'Applicable promos: {promos}')
