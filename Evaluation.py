@@ -2,12 +2,12 @@ import pandas as pd
 import operator
 import sqlite3
 import re
-import time
 import json
 from datetime import datetime
+from flask import Flask, request, jsonify
 
 # Function to get child records matching the conditions from the database
-def get_matching_child_records(attributes, profile_attributes, conn):
+def get_matching_child_records(attributes, profile_attributes, products, conn):
     cursor = conn.cursor()
     matching_records = []
 
@@ -15,14 +15,18 @@ def get_matching_child_records(attributes, profile_attributes, conn):
     for attribute in attributes:
         cursor.execute('SELECT * FROM CHILD_RULES WHERE CONDITION = ? AND OPERATOR = "=" AND VALUE = ?', (attribute["Name"], attribute["Value"]))
         records = cursor.fetchall()
-        print(f'Query for attribute {attribute["Name"]}={attribute["Value"]} returned {len(records)} records.')
         matching_records.extend(records)
 
     # Query the child table for each profile attribute
     for key, value in profile_attributes.items():
         cursor.execute('SELECT * FROM CHILD_RULES WHERE CONDITION = ? AND OPERATOR = "=" AND VALUE = ?', (key, value))
         records = cursor.fetchall()
-        print(f'Query for profile attribute {key}={value} returned {len(records)} records.')
+        matching_records.extend(records)
+
+    # Query the child table for each product
+    for product in products:
+        cursor.execute('SELECT * FROM CHILD_RULES WHERE CONDITION = ? AND OPERATOR = "=" AND VALUE = ?', ("Product", product["ProductId"]))
+        records = cursor.fetchall()
         matching_records.extend(records)
 
     return matching_records
@@ -38,10 +42,8 @@ def get_child_records_by_source_id(source_record_id, conn):
 def get_parent_records(source_record_ids, conn):
     cursor = conn.cursor()
     query = 'SELECT * FROM PARENT_COMP_MATRIX WHERE SOURCE_RECORD_ID IN ({})'.format(','.join('?' for _ in source_record_ids))
-    print(f'Executing query: {query} with source_record_ids: {source_record_ids}')
     cursor.execute(query, source_record_ids)
     data = cursor.fetchall()
-    print(f'Parent records query returned {len(data)} records.')
     return data
 
 # Operators mapping
@@ -53,7 +55,7 @@ operators = {
 }
 
 # Function to evaluate a condition
-def evaluate_condition(condition, attributes, profile_attributes):
+def evaluate_condition(condition, attributes, profile_attributes, products):
     attribute_value = None
     if condition[10].lower() == 'attribute':
         for attribute in attributes:
@@ -66,6 +68,12 @@ def evaluate_condition(condition, attributes, profile_attributes):
         if attribute_value is not None:
             if operators.get(condition[13])(attribute_value, condition[15]):
                 return True
+    elif condition[10].lower() == 'product':
+        for product in products:
+            if 'Product' == condition[8]:
+                attribute_value = product["ProductId"]
+                if operators.get(condition[13])(attribute_value, condition[15]):
+                    return True
     return False
 
 # Function to build a valid boolean expression
@@ -83,12 +91,19 @@ def build_expression(expression, eval_dict):
             result.append('and')
         else:
             result.append(token)
+    # Ensure balanced parentheses
+    open_parens = result.count('(')
+    close_parens = result.count(')')
+    if open_parens > close_parens:
+        result.extend([')'] * (open_parens - close_parens))
+    elif close_parens > open_parens:
+        result = ['('] * (close_parens - open_parens) + result
     return ' '.join(result)
 
 # Function to evaluate the final expression
-def evaluate_expression(expression, child_records, attributes, profile_attributes):
+def evaluate_expression(expression, child_records, attributes, profile_attributes, products):
     # Create a dictionary to map record IDs to their evaluation results
-    eval_dict = {f"{record[14]}": str(evaluate_condition(record, attributes, profile_attributes)).capitalize() for record in child_records}
+    eval_dict = {f"{record[14]}": str(evaluate_condition(record, attributes, profile_attributes, products)).capitalize() for record in child_records}
 
     # Build a valid boolean expression
     expression = build_expression(expression, eval_dict)
@@ -104,19 +119,17 @@ def evaluate_expression(expression, child_records, attributes, profile_attribute
         raise e
 
 # Function to apply promo
-def apply_promo(attributes, profile_attributes):
+def apply_promo(attributes, profile_attributes, products):
     conn = sqlite3.connect('mydatabase.db')
     
     # Get child records matching the conditions
-    matching_child_records = get_matching_child_records(attributes, profile_attributes, conn)
+    matching_child_records = get_matching_child_records(attributes, profile_attributes, products, conn)
     
     if not matching_child_records:
-        print('No matching child records found.')
         return []
 
     # Get unique source record IDs from matching child records
     source_record_ids = list(set(record[16] for record in matching_child_records))
-    print(f'Unique source record IDs: {source_record_ids}')
 
     # Get parent records using the source record IDs
     parent_records = get_parent_records(source_record_ids, conn)
@@ -130,9 +143,25 @@ def apply_promo(attributes, profile_attributes):
         # Get all child records associated with this parent record's source ID
         child_records = get_child_records_by_source_id(source_record_id, conn)
         
-        if evaluate_expression(subject_evaluator, child_records, attributes, profile_attributes):
-            applicable_promos.append(source_record_id)
-    
+        # Evaluate expression for each product
+        for product in products:
+            if evaluate_expression(subject_evaluator, child_records, attributes, profile_attributes, [product]):
+                # Check if object_product_list column in parent record matches the ProductId or ParentProdId
+                if product["ParentProdId"]:
+                    if parent_record[31] == product["ParentProdId"]:
+                        applicable_promos.append({
+                            "sourcerecordid": source_record_id,
+                            "rootproductid": product["ProductId"],
+                            "rowid": product["rowid"]
+                        })
+                else:
+                    if parent_record[31] == product["ProductId"]:
+                        applicable_promos.append({
+                            "sourcerecordid": source_record_id,
+                            "rootproductid": product["ProductId"],
+                            "rowid": product["rowid"]
+                        })
+
     conn.close()
     return applicable_promos
 
@@ -140,23 +169,26 @@ def apply_promo(attributes, profile_attributes):
 # Hardcoded input for debugging
 input_json = {
     "attributes": [
-        {"Name": "Prod Prom Name", "Value": "Flex Fiber Ambassador", "Type": "Attribute"},
+        {"Name": "Action Code", "Value": "Add", "Type": "Attribute"},
         {"Name": "Prod Prom Name", "Value": "Home fiber", "Type": "Attribute"}
     ],
     "profileattributes": {
-        "BGC_BF_ACCESS_TYPE": "Both",
-        "BGC_MOVE_MIGRATE_STATUS": "Add",
-        "BGC_ORIGINAL_MOVE_MIGRATE_STATUS": "Add",
-        "BGC_BF_ZONE": "Copper - Copper"
-    }
+        "BackEndOrderType": "WEBSHOP",
+        "BGC_Partner_Sub_Segment": "E-Tail",
+    },
+    "products": [
+        {"Name": "Mobile Voice", "ProductId": "MWLGG", "ParentProdId": "DUZZG", "rowid": "1-xx1"},
+        {"Name": "Telephony", "ProductId": "MWLGGI", "ParentProdId": "DRPVM", "rowid": "1-xx2"}
+    ]
 }
 
-# Extracting attributes and profile attributes
+# Extracting attributes, profile attributes, and products
 attributes = input_json['attributes']
 profile_attributes = input_json['profileattributes']
+products = input_json['products']
 
 # Call the function
-promos = apply_promo(attributes, profile_attributes)
+promos = apply_promo(attributes, profile_attributes, products)
 
 # Print the results
-print(f'Applicable promos: {promos}')
+print(f'Applicable promos: {json.dumps(promos, indent=4)}')

@@ -1,15 +1,16 @@
-from flask import Flask, request, jsonify
 import pandas as pd
 import operator
 import sqlite3
 import re
 import json
 from datetime import datetime
+from flask import Flask, request, jsonify
+import time
 
 app = Flask(__name__)
 
 # Function to get child records matching the conditions from the database
-def get_matching_child_records(attributes, profile_attributes, conn):
+def get_matching_child_records(attributes, profile_attributes, products, conn):
     cursor = conn.cursor()
     matching_records = []
 
@@ -22,6 +23,12 @@ def get_matching_child_records(attributes, profile_attributes, conn):
     # Query the child table for each profile attribute
     for key, value in profile_attributes.items():
         cursor.execute('SELECT * FROM CHILD_RULES WHERE CONDITION = ? AND OPERATOR = "=" AND VALUE = ?', (key, value))
+        records = cursor.fetchall()
+        matching_records.extend(records)
+
+    # Query the child table for each product
+    for product in products:
+        cursor.execute('SELECT * FROM CHILD_RULES WHERE CONDITION = ? AND OPERATOR = "=" AND VALUE = ?', ("Product", product["ProductId"]))
         records = cursor.fetchall()
         matching_records.extend(records)
 
@@ -51,7 +58,7 @@ operators = {
 }
 
 # Function to evaluate a condition
-def evaluate_condition(condition, attributes, profile_attributes):
+def evaluate_condition(condition, attributes, profile_attributes, products):
     attribute_value = None
     if condition[10].lower() == 'attribute':
         for attribute in attributes:
@@ -64,6 +71,12 @@ def evaluate_condition(condition, attributes, profile_attributes):
         if attribute_value is not None:
             if operators.get(condition[13])(attribute_value, condition[15]):
                 return True
+    elif condition[10].lower() == 'product':
+        for product in products:
+            if 'Product' == condition[8]:
+                attribute_value = product["ProductId"]
+                if operators.get(condition[13])(attribute_value, condition[15]):
+                    return True
     return False
 
 # Function to build a valid boolean expression
@@ -81,12 +94,19 @@ def build_expression(expression, eval_dict):
             result.append('and')
         else:
             result.append(token)
+    # Ensure balanced parentheses
+    open_parens = result.count('(')
+    close_parens = result.count(')')
+    if open_parens > close_parens:
+        result.extend([')'] * (open_parens - close_parens))
+    elif close_parens > open_parens:
+        result = ['('] * (close_parens - open_parens) + result
     return ' '.join(result)
 
 # Function to evaluate the final expression
-def evaluate_expression(expression, child_records, attributes, profile_attributes):
+def evaluate_expression(expression, child_records, attributes, profile_attributes, products):
     # Create a dictionary to map record IDs to their evaluation results
-    eval_dict = {f"{record[14]}": str(evaluate_condition(record, attributes, profile_attributes)).capitalize() for record in child_records}
+    eval_dict = {f"{record[14]}": str(evaluate_condition(record, attributes, profile_attributes, products)).capitalize() for record in child_records}
 
     # Build a valid boolean expression
     expression = build_expression(expression, eval_dict)
@@ -95,18 +115,22 @@ def evaluate_expression(expression, child_records, attributes, profile_attribute
     try:
         return eval(expression)
     except SyntaxError as e:
+        print(f"Syntax error in expression: {expression}")
         raise e
     except NameError as e:
+        print(f"Name error in expression: {expression}")
         raise e
 
 # Function to apply promo
-def apply_promo(attributes, profile_attributes):
+def apply_promo(attributes, profile_attributes, products):
+    start_time = time.time()  # Start timing
     conn = sqlite3.connect('mydatabase.db')
     
     # Get child records matching the conditions
-    matching_child_records = get_matching_child_records(attributes, profile_attributes, conn)
+    matching_child_records = get_matching_child_records(attributes, profile_attributes, products, conn)
     
     if not matching_child_records:
+        conn.close()
         return []
 
     # Get unique source record IDs from matching child records
@@ -124,10 +148,28 @@ def apply_promo(attributes, profile_attributes):
         # Get all child records associated with this parent record's source ID
         child_records = get_child_records_by_source_id(source_record_id, conn)
         
-        if evaluate_expression(subject_evaluator, child_records, attributes, profile_attributes):
-            applicable_promos.append(source_record_id)
-    
+        # Evaluate expression for each product
+        for product in products:
+            if evaluate_expression(subject_evaluator, child_records, attributes, profile_attributes, [product]):
+                # Check if object_product_list column in parent record matches the ProductId or ParentProdId
+                if product["ParentProdId"]:
+                    if parent_record[31] == product["ParentProdId"]:
+                        applicable_promos.append({
+                            "sourcerecordid": source_record_id,
+                            "rootproductid": product["ProductId"],
+                            "rowid": product["rowid"]
+                        })
+                else:
+                    if parent_record[31] == product["ProductId"]:
+                        applicable_promos.append({
+                            "sourcerecordid": source_record_id,
+                            "rootproductid": product["ProductId"],
+                            "rowid": product["rowid"]
+                        })
+
     conn.close()
+    end_time = time.time()  # End timing
+    print(f'Time taken to execute apply_promo: {end_time - start_time} seconds')
     return applicable_promos
 
 @app.route('/apply_promo', methods=['POST'])
@@ -135,12 +177,13 @@ def apply_promo_api():
     input_json = request.json
     if not input_json:
         return jsonify({"error": "Invalid input"}), 400
-    
-    attributes = input_json['attributes']
-    profile_attributes = input_json['profileattributes']
-    
+
+    attributes = input_json.get('attributes', [])
+    profile_attributes = input_json.get('profileattributes', {})
+    products = input_json.get('products', [])
+
     try:
-        promos = apply_promo(attributes, profile_attributes)
+        promos = apply_promo(attributes, profile_attributes, products)
         return jsonify({"promos": promos})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
